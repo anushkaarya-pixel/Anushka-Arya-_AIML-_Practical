@@ -1,0 +1,59 @@
+
+% Experiment 5: Student Performance Analysis
+
+domains
+    name = symbol
+    marks = integer
+
+predicates
+    student(name, marks)
+    topper(name)
+    average(name)
+    fail_student(name)
+    result(name)
+
+clauses
+    % Student database
+    student(amit, 95).
+    student(rahul, 82).
+    student(neha, 65).
+    student(priya, 55).
+    student(raj, 30).
+    student(sumit, 40).
+
+    % Rule for topper (marks >= 85)
+    topper(X) :-
+        student(X, M),
+        M >= 85.
+
+    % Rule for average student (marks >= 50 and < 85)
+    average(X) :-
+        student(X, M),
+        M >= 50,
+        M < 85.
+
+    % Rule for failed student (marks < 50)
+    fail_student(X) :-
+        student(X, M),
+        M < 50.
+
+    % Display student result
+    result(X) :-
+        topper(X),
+        write(X), write(" is a Topper"), nl.
+
+    result(X) :-
+        average(X),
+        write(X), write(" is an Average Student"), nl.
+
+    result(X) :-
+        fail_student(X),
+        write(X), write(" has Failed"), nl.
+
+//topper(X).
+//X = amit
+
+//average(X).
+(* X = rahul *)
+(* X = neha
+X = priya *)
