@@ -1,0 +1,55 @@
+
+domains
+    faculty, subject, classroom, day, time = symbol
+
+predicates
+    timetable(faculty, subject, classroom, day, time)
+    faculty_subject(faculty, subject)
+    subject_classroom(subject, classroom)
+    faculty_timetable(faculty)
+    classroom_timetable(classroom)
+
+clauses
+    % Timetable facts
+    timetable(amit, dsa, room101, monday, 9).
+    timetable(neha, dbms, room102, monday, 10).
+    timetable(raj, java, room103, tuesday, 9).
+    timetable(amit, python, room101, wednesday, 11).
+    timetable(neha, os, room102, thursday, 10).
+    timetable(raj, dsa, room103, friday, 12).
+
+    % Find subjects taught by a faculty
+    faculty_subject(F, S) :-
+        timetable(F, S, _, _, _).
+
+    % Find classroom for a subject
+    subject_classroom(S, C) :-
+        timetable(_, S, C, _, _).
+
+    % Display timetable of a faculty
+    faculty_timetable(F) :-
+        timetable(F, S, C, D, T),
+        write(F), write(" teaches "),
+        write(S), write(" in "),
+        write(C), write(" on "),
+        write(D), write(" at "),
+        write(T), nl.
+
+    % Display timetable of a classroom
+    classroom_timetable(C) :-
+        timetable(F, S, C, D, T),
+        write(F), write(" teaches "),
+        write(S), write(" in "),
+        write(C), write(" on "),
+        write(D), write(" at "),
+        write(T), nl.
+//faculty_subject(amit, S).
+(* S = dsa
+S = python *)
+
+//subject_classroom(dbms, C).
+// C = room102 
+
+//faculty_timetable(amit).
+//amit teaches dsa in room101 on monday at 9
+//amit teaches python in room101 on wednesday at 11
