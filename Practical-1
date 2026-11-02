@@ -1,1 +1,37 @@
 Practical 1
+
+% Facts
+student(rahul).
+student(amit).
+student(priya).
+
+age(rahul, 20).
+age(amit, 21).
+age(priya, 19).
+
+subject(rahul, computer_science).
+subject(amit, mathematics).
+subject(priya, physics).
+
+college(rahul, abc_college).
+college(amit, abc_college).
+college(priya, xyz_college).
+
+% Rules
+young_student(X) :-
+    age(X, A),
+    A < 21.
+
+same_college(X, Y) :-
+    college(X, C),
+    college(Y, C),
+    X \= Y.
+
+% Queries
+% ?- student(rahul).
+% ?- age(rahul, X).
+% ?- subject(rahul, X).
+% ?- young_student(rahul).
+true
+
+% ?- same_college(rahul, amit).
