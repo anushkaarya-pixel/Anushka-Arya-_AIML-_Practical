@@ -1,0 +1,32 @@
+
+% Experiment 3: List Manipulation Operations
+
+% 1. Append two lists
+my_append([], L, L).
+my_append([H|T], L, [H|R]) :-
+    my_append(T, L, R).
+
+% 2. Reverse a list
+my_reverse([], []).
+my_reverse([H|T], R) :-
+    my_reverse(T, RT),
+    my_append(RT, [H], R).
+
+% 3. Search for an element in a list
+my_member(X, [X|_]).
+my_member(X, [_|T]) :-
+    my_member(X, T).
+
+% 4. Find the length of a list
+my_length([], 0).
+my_length([_|T], N) :-
+    my_length(T, N1),
+    N is N1 + 1.
+// my_append([1,2,3], [4,5], X).
+//X = [1,2,3,4,5].
+
+// my_reverse([1,2,3,4], X).
+//X = [4,3,2,1].
+
+// my_member(3, [1,2,3,4]).
+//true.
