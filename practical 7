@@ -1,0 +1,65 @@
+
+% Graph representation
+
+edge(a, b).
+edge(a, c).
+edge(b, d).
+edge(b, e).
+edge(c, f).
+edge(d, g).
+edge(e, g).
+edge(f, g).
+
+% Heuristic values (estimated distance to goal)
+
+heuristic(a, 6).
+heuristic(b, 4).
+heuristic(c, 5).
+heuristic(d, 2).
+heuristic(e, 3).
+heuristic(f, 4).
+heuristic(g, 0).
+
+% Greedy Best-First Search
+
+gbfs(Start, Goal, Path) :-
+    gbfs_queue([[Start]], Goal, ReversePath),
+    reverse(ReversePath, Path).
+
+% Base case: Goal is reached
+
+gbfs_queue([[Goal|Rest]|_], Goal, [Goal|Rest]).
+
+% Recursive case
+
+gbfs_queue([CurrentPath|Queue], Goal, Result) :-
+    CurrentPath = [Current|_],
+
+    findall(
+        [Next|CurrentPath],
+        (edge(Current, Next),
+         \+ member(Next, CurrentPath)),
+        NewPaths
+    ),
+
+    append(Queue, NewPaths, UpdatedQueue),
+
+    sort_paths(UpdatedQueue, SortedQueue),
+
+    gbfs_queue(SortedQueue, Goal, Result).
+
+% Sort paths based on heuristic value
+
+sort_paths(Paths, Sorted) :-
+    map_list_to_pairs(path_heuristic, Paths, Pairs),
+    keysort(Pairs, SortedPairs),
+    pairs_values(SortedPairs, Sorted).
+
+% Get heuristic value of the last node in a path
+
+path_heuristic([Node|_], H) :-
+    heuristic(Node, H).
+
+    
+// gbfs(a, g, Path).
+//Path = [a, b, d, g].
