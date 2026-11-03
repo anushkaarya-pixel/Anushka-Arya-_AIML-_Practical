@@ -1,0 +1,84 @@
+
+:- use_module(library(pairs)).
+
+% Weighted graph representation
+% edge(Source, Destination, Cost).
+
+edge(a, b, 2).
+edge(a, c, 4).
+edge(b, d, 3).
+edge(b, e, 5).
+edge(c, f, 2).
+edge(d, g, 4).
+edge(e, g, 2).
+edge(f, g, 3).
+
+% Heuristic values
+heuristic(a, 7).
+heuristic(b, 6).
+heuristic(c, 5).
+heuristic(d, 4).
+heuristic(e, 2).
+heuristic(f, 3).
+heuristic(g, 0).
+
+% A* Search
+astar(Start, Goal, Path, Cost) :-
+    astar_queue(
+        [node(Start, [Start], 0)],
+        Goal,
+        ReversePath,
+        Cost
+    ),
+    reverse(ReversePath, Path).
+
+% Base case: Goal is reached
+astar_queue(
+    [node(Goal, Path, Cost)|_],
+    Goal,
+    Path,
+    Cost
+).
+
+% Recursive case
+astar_queue(
+    [node(Current, Path, G)|Queue],
+    Goal,
+    ResultPath,
+    ResultCost
+) :-
+    findall(
+        node(Next, [Next|Path], NewG),
+        (
+            edge(Current, Next, EdgeCost),
+            \+ member(Next, Path),
+            NewG is G + EdgeCost
+        ),
+        NewNodes
+    ),
+
+    append(Queue, NewNodes, UpdatedQueue),
+
+    sort_nodes(UpdatedQueue, SortedQueue),
+
+    astar_queue(
+        SortedQueue,
+        Goal,
+        ResultPath,
+        ResultCost
+    ).
+
+% Sort nodes according to f(n) = g(n) + h(n)
+sort_nodes(Nodes, Sorted) :-
+    map_list_to_pairs(node_score, Nodes, Pairs),
+    keysort(Pairs, SortedPairs),
+    pairs_values(SortedPairs, Sorted).
+
+% Calculate evaluation function
+node_score(node(Node, _, G), F) :-
+    heuristic(Node, H),
+    F is G + H.
+// astar(a, g, Path, Cost).
+//Path = [a, b, e, g],
+//Cost = 9.
+
