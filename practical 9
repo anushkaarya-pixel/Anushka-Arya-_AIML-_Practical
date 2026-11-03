@@ -1,0 +1,51 @@
+
+% Objective function
+% Maximize f(x) = -(x-5)^2 + 25
+
+objective(X, Value) :-
+    Value is -((X - 5) * (X - 5)) + 25.
+
+% Generate neighboring states
+neighbor(X, X1) :-
+    X1 is X + 1.
+
+neighbor(X, X1) :-
+    X1 is X - 1.
+
+% Hill Climbing algorithm
+hill_climb(Current, Best) :-
+    objective(Current, CurrentValue),
+
+    findall(
+        Value-Next,
+        (
+            neighbor(Current, Next),
+            objective(Next, Value),
+            Value > CurrentValue
+        ),
+        Neighbors
+    ),
+
+    ( Neighbors = [] ->
+        Best = Current
+    ;
+        keysort(Neighbors, Sorted),
+        reverse(Sorted, [_-NextBest|_]),
+        hill_climb(NextBest, Best)
+    ).
+
+% Find optimum solution
+solve :-
+    hill_climb(0, Optimum),
+    objective(Optimum, Value),
+    write('Optimal solution X = '),
+    write(Optimum),
+    nl,
+    write('Maximum value = '),
+    write(Value),
+    nl.
+//solve.
+(* Optimal solution X = 5
+Maximum value = 25
+true. *)
+
