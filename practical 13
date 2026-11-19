@@ -1,0 +1,70 @@
+
+# Blocks World Problem in Artificial Intelligence
+
+# Define blocks
+blocks = {'A', 'B', 'C', 'D'}
+
+# Define stacking state
+on = {
+    'A': 'B',
+    'B': 'C'
+}
+
+on_table = {'C', 'D'}
+
+# Find clear blocks
+def find_clear(blocks, on):
+    occupied = set(on.values())
+    return blocks - occupied
+
+# Check validity of stacking state
+def check_validity(blocks, on, on_table):
+
+    # Check if all blocks are accounted for
+    supported = set(on.keys()) | on_table
+
+    if supported != blocks:
+        return False, "Some blocks are missing or duplicated."
+
+    # Check for invalid block references
+    for x, y in on.items():
+        if x not in blocks or y not in blocks:
+            return False, "Invalid block reference."
+
+        # Check self stacking
+        if x == y:
+            return False, "A block cannot be on itself."
+
+    # Check duplicate support
+    if len(set(on.values())) != len(on.values()):
+        return False, "A block cannot support multiple blocks."
+
+    # Check table and stacking conflicts
+    if set(on.keys()) & on_table:
+        return False, "A block cannot be both on another block and on the table."
+
+    # Check circular stacking
+    for block in blocks:
+        visited = set()
+        current = block
+
+        while current in on:
+            if current in visited:
+                return False, "Circular stacking detected."
+
+            visited.add(current)
+            current = on[current]
+
+    return True, "Valid stacking state."
+
+# Display state
+print("Blocks:", blocks)
+print("On:", on)
+print("On Table:", on_table)
+print("Clear:", find_clear(blocks, on))
+
+# Validate state
+valid, message = check_validity(blocks, on, on_table)
+
+print("\nState Validation:", message)
+
