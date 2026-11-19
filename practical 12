@@ -1,0 +1,33 @@
+
+% N-Queens Problem using Backtracking
+
+n_queens(N, Solution) :-
+    N > 0,
+    place_queens(N, 1, [], Solution).
+
+% Base case
+place_queens(N, Row, Placed, Solution) :-
+    Row > N,
+    reverse(Placed, Solution).
+
+% Recursive case
+place_queens(N, Row, Placed, Solution) :-
+    Row =< N,
+    between(1, N, Col),
+    safe(Col, Row, Placed),
+    NextRow is Row + 1,
+    place_queens(N, NextRow,
+                 [Col|Placed], Solution).
+
+% Check safety of queen placement
+safe(_, _, []).
+
+safe(Col, Row, [PrevCol|Rest]) :-
+    PrevRow is Row - 1,
+    Col =\= PrevCol,
+    abs(Col - PrevCol) =\= Row - PrevRow,
+    safe(Col, Row, Rest).
+(* ?- n_queens(4, Solution).
+Solution = [2, 4, 1, 3] ;
+Solution = [3, 1, 4, 2] ;
+false. *)
