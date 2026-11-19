@@ -1,0 +1,95 @@
+
+:- use_module(library(random)).
+:- use_module(library(math)).
+
+% Objective function
+fitness(X, Y) :-
+    Y is -((X - 2) ** 2) + 10 * sin(5 * X).
+
+% Generate a random neighboring solution
+neighbor(X, NewX) :-
+    random_between(-10, 10, R),
+    NewX is max(0, min(5, X + R / 20)).
+
+% Hill Climbing Algorithm
+hill_climb(X, BestX, BestY, Steps) :-
+    fitness(X, Y),
+    neighbor(X, NX),
+    fitness(NX, NY),
+    ( NY > Y ->
+        hill_climb(NX, BestX, BestY, Steps1),
+        Steps is Steps1 + 1
+    ;
+        BestX = X,
+        BestY = Y,
+        Steps = 1
+    ).
+
+% Simulated Annealing Algorithm
+simulated_annealing(X, T, Alpha, Iterations,
+                    BestX, BestY) :-
+    fitness(X, Y),
+    sa_loop(X, Y, X, Y, T, Alpha, Iterations,
+            BestX, BestY).
+
+sa_loop(X, Y, BX, BY, T, Alpha, N, BestX, BestY) :-
+    ( N =< 0 ; T < 0.001 ->
+        BestX = BX,
+        BestY = BY
+    ;
+        neighbor(X, NX),
+        fitness(NX, NY),
+        Delta is NY - Y,
+        ( Delta > 0 ->
+            NX1 = NX,
+            NY1 = NY
+        ;
+            random(R),
+            P is exp(Delta / T),
+            ( R < P ->
+                NX1 = NX,
+                NY1 = NY
+            ;
+                NX1 = X,
+                NY1 = Y
+            )
+        ),
+        ( NY1 > BY ->
+            NBX = NX1,
+            NBY = NY1
+        ;
+            NBX = BX,
+            NBY = BY
+        ),
+        NT is T * Alpha,
+        N1 is N - 1,
+        sa_loop(NX1, NY1, NBX, NBY, NT, Alpha, N1,
+                BestX, BestY)
+    ).
+
+% Run both algorithms
+run :-
+    random_between(0, 500, R),
+    X is R / 100,
+    hill_climb(X, HX, HY, _),
+    simulated_annealing(X, 100, 0.95, 1000, SX, SY),
+    nl,
+    write('Initial Solution: '), write(X), nl,
+    write('Hill Climbing Result:'), nl,
+    write('X = '), write(HX),
+    write(', Fitness = '), write(HY), nl,
+    write('Simulated Annealing Result:'), nl,
+    write('X = '), write(SX),
+    write(', Fitness = '), write(SY), nl.
+
+(* ?- [experiment10].
+?- run.
+Initial Solution: 1.5
+
+Hill Climbing Result:
+X = 1.62
+Fitness = 7.85
+
+Simulated Annealing Result:
+X = 2.01
+Fitness = 9.98 *)
