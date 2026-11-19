@@ -1,0 +1,77 @@
+
+# University Course Advisory System
+
+# Available elective courses
+courses = {
+    "Artificial Intelligence": [
+        "programming", "mathematics", "ai", "problem solving"
+    ],
+    "Data Science": [
+        "programming", "statistics", "data analysis", "mathematics"
+    ],
+    "Cyber Security": [
+        "networking", "security", "programming", "problem solving"
+    ],
+    "Web Development": [
+        "programming", "web design", "creativity", "html"
+    ],
+    "Cloud Computing": [
+        "networking", "cloud", "programming", "technology"
+    ],
+    "Machine Learning": [
+        "programming", "mathematics", "statistics", "ai"
+    ],
+    "Graphic Designing": [
+        "creativity", "design", "art", "web design"
+    ]
+}
+
+# Get student information
+print("===== UNIVERSITY COURSE ADVISORY SYSTEM =====")
+
+name = input("Enter Student Name: ")
+
+print("\nEnter your interests and skills")
+print("Example: programming, mathematics, ai")
+
+interests = input("Enter interests: ").lower()
+
+# Convert interests into a set
+student_interests = {
+    item.strip() for item in interests.split(",")
+}
+
+# Calculate matching scores
+recommendations = {}
+
+for course, skills in courses.items():
+
+    match = student_interests.intersection(skills)
+
+    score = len(match)
+
+    if score > 0:
+        recommendations[course] = (score, match)
+
+# Display recommendations
+print("\n===== COURSE RECOMMENDATIONS =====")
+print("Student Name:", name)
+
+if recommendations:
+
+    sorted_courses = sorted(
+        recommendations.items(),
+        key=lambda x: x[1][0],
+        reverse=True
+    )
+
+    for course, (score, matched_skills) in sorted_courses:
+        print("\nCourse:", course)
+        print("Matching Score:", score)
+        print("Matched Interests:", ", ".join(matched_skills))
+
+else:
+    print("No suitable courses found.")
+    print("Try entering more interests or skills.")
+
+print("\nThank you for using Course Advisory System!")
